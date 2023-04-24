@@ -1,47 +1,86 @@
 import styled from "styled-components"
 import { BiExit } from "react-icons/bi"
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai"
+import { UserContext } from "../contexts/userContext"
+import { useContext, useEffect, useState } from "react"
+import axios from "axios"
+import TransactionItem from "../components/TransactionItem"
+import { useNavigate } from "react-router-dom"
 
 export default function HomePage() {
+  const {user, setUser} = useContext(UserContext)
+  const [list, setList] = useState([])
+  const [balance, setBalance] = useState(0)
+  const navigate = useNavigate()
+  
+  function atualizarSaldo() {
+    let saldo = 0
+    for(let i = 0; i < list.length; i++) {
+      const t = list[i]
+      if(t.value) {
+        if(t.type === 'entrada') {
+          saldo += t.value
+        } else {
+          saldo -= t.value
+        }
+        setBalance(saldo)
+      }
+    }
+  }
+  useEffect(() => {
+    console.log(user)
+    if(!user) {
+      return navigate("/")
+    }
+    const promise = axios.get(`${process.env.REACT_APP_API_URL}/transactions`, {
+      headers: {
+        Authorization: `Bearer ${user.token}`
+      }
+    })
+    promise.then((res) => {
+      setList(res.data)
+      atualizarSaldo()
+    })
+    promise.catch((err) => {
+      console.log(err.response.data)
+    })
+  }, [])
+  function addEntry() {
+    navigate('/nova-transacao/entrada')
+  }
+  function addExit() {
+    navigate('/nova-transacao/saida')
+  }
   return (
     <HomeContainer>
       <Header>
-        <h1>Olá, Fulano</h1>
+        <h1>Olá, {user ? user.name : ''}</h1>
         <BiExit />
       </Header>
 
       <TransactionsContainer>
         <ul>
-          <ListItemContainer>
-            <div>
-              <span>30/11</span>
-              <strong>Almoço mãe</strong>
-            </div>
-            <Value color={"negativo"}>120,00</Value>
-          </ListItemContainer>
-
-          <ListItemContainer>
-            <div>
-              <span>15/11</span>
-              <strong>Salário</strong>
-            </div>
-            <Value color={"positivo"}>3000,00</Value>
-          </ListItemContainer>
+            {list.map((t, index) => {
+              return (
+                <TransactionItem key={index} t={t} index={index}/>
+              )
+            })}
         </ul>
 
         <article>
           <strong>Saldo</strong>
-          <Value color={"positivo"}>2880,00</Value>
+          <Value color={balance > 0 ? "positivo" : "negativo"}>{balance ?? balance }</Value>
         </article>
       </TransactionsContainer>
 
 
       <ButtonsContainer>
-        <button>
+        
+        <button onClick={addEntry}>
           <AiOutlinePlusCircle />
           <p>Nova <br /> entrada</p>
         </button>
-        <button>
+        <button onClick={addExit}>
           <AiOutlineMinusCircle />
           <p>Nova <br />saída</p>
         </button>
@@ -106,16 +145,4 @@ const Value = styled.div`
   font-size: 16px;
   text-align: right;
   color: ${(props) => (props.color === "positivo" ? "green" : "red")};
-`
-const ListItemContainer = styled.li`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-  color: #000000;
-  margin-right: 10px;
-  div span {
-    color: #c6c6c6;
-    margin-right: 10px;
-  }
 `
