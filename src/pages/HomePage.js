@@ -13,20 +13,7 @@ export default function HomePage() {
   const [balance, setBalance] = useState(0)
   const navigate = useNavigate()
   
-  function atualizarSaldo() {
-    let saldo = 0
-    for(let i = 0; i < list.length; i++) {
-      const t = list[i]
-      if(t.value) {
-        if(t.type === 'entrada') {
-          saldo += t.value
-        } else {
-          saldo -= t.value
-        }
-        setBalance(saldo)
-      }
-    }
-  }
+  
   useEffect(() => {
     console.log(user)
     if(!user) {
@@ -38,8 +25,11 @@ export default function HomePage() {
       }
     })
     promise.then((res) => {
-      setList(res.data)
-      atualizarSaldo()
+      const arr = res.data
+      console.log(arr)
+      const sald = arr.pop()
+      setList(arr.reverse())
+      setBalance(sald.saldo)
     })
     promise.catch((err) => {
       console.log(err.response.data)
@@ -51,11 +41,21 @@ export default function HomePage() {
   function addExit() {
     navigate('/nova-transacao/saida')
   }
+  function logout() {
+    axios.delete(`${process.env.REACT_APP_API_URL}/logout`, {token: user.token})
+    .then((res) => {
+      localStorage.removeItem('user')
+      alert("Você foi deslogado")
+      navigate('/')
+    })
+    .catch((err) => console.log(err.response.data))
+    
+  }
   return (
     <HomeContainer>
       <Header>
         <h1>Olá, {user ? user.name : ''}</h1>
-        <BiExit />
+        <BiExit onClick={logout}/>
       </Header>
 
       <TransactionsContainer>
@@ -69,7 +69,7 @@ export default function HomePage() {
 
         <article>
           <strong>Saldo</strong>
-          <Value color={balance > 0 ? "positivo" : "negativo"}>{balance ?? balance }</Value>
+          <Value color={balance > 0 ? "positivo" : "negativo"}>{balance ? balance : 0}</Value>
         </article>
       </TransactionsContainer>
 

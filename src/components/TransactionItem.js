@@ -1,13 +1,14 @@
 import styled from "styled-components"
 
 export default function TransactionItem(t) {
+  const {description, value, type, date} = t.t
     return (
         <ListItemContainer>
             <div>
-              <span>{t.t.date}</span>
-              <strong>{t.t.description}</strong>
+              <span>{date}</span>
+              <strong>{description}</strong>
             </div>
-            <Value color={t.t.type === "entrada" ? "positivo" : "negativo"}>{t.t.value}</Value>
+            <Value color={type === "entrada" ? "positivo" : "negativo"}>{value.toFixed(2).replace('.',',')}</Value>
           </ListItemContainer>
     )
 }
