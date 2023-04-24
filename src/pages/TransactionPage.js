@@ -16,7 +16,8 @@ export default function TransactionsPage() {
     const body = {description, value: Number(value), type}
     const config = {
       headers: { Authorization: `Bearer ${user.token}`}
-  }
+    }
+    
     const promise = axios.post(`${process.env.REACT_APP_API_URL}/transactions`, body, config)
     promise.then((res) => {
         navigate('/home')

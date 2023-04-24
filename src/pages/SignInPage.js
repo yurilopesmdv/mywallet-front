@@ -23,7 +23,7 @@ export default function SignInPage() {
     e.preventDefault()
     if(!email || !password) return alert("Preencha os dados corretamente!")
     const body = {email, password}
-  
+    
     //const {name, token} = await axios.post(`${process.env.REACT_APP_API_URL}/signin`, body)
     const promise = axios.post(`${process.env.REACT_APP_API_URL}/signin`, body)
     promise.then((res) => {
