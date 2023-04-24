@@ -12,7 +12,7 @@ export default function TransactionsPage() {
   const navigate = useNavigate()
   function handleSubmit(e){
     e.preventDefault()
-    console.log(user.token)
+    if(!description || !value) return alert("Preencha todos os campos!")
     const body = {description, value: Number(value), type}
     const config = {
       headers: { Authorization: `Bearer ${user.token}`}
@@ -27,8 +27,8 @@ export default function TransactionsPage() {
     <TransactionsContainer>
       <h1>Nova {type === 'entrada' ? "ENTRADA" : "SAÍDA"}</h1>
       <form>
-        <input onChange={e => setValue(e.target.value)} required placeholder="Valor" type="text"/>
-        <input onChange={e => setDescription(e.target.value)} required placeholder="Descrição" type="text" />
+        <input onChange={e => setValue(e.target.value)} placeholder="Valor" type="text" required/>
+        <input onChange={e => setDescription(e.target.value)} placeholder="Descrição" type="text"  required/>
         <button type="submit" onClick={handleSubmit}>Salvar {type === 'entrada' ? "ENTRADA" : "SAÍDA"}</button>
       </form>
     </TransactionsContainer>

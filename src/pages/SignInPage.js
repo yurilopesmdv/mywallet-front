@@ -21,6 +21,7 @@ export default function SignInPage() {
   },[])
   async function handleSubmit(e) {
     e.preventDefault()
+    if(!email || !password) return alert("Preencha os dados corretamente!")
     const body = {email, password}
   
     //const {name, token} = await axios.post(`${process.env.REACT_APP_API_URL}/signin`, body)
@@ -32,7 +33,7 @@ export default function SignInPage() {
       setUser({name, token})
       navigate("/home")
     })
-    promise.catch((err) => console.log(err.message))
+    promise.catch((err) => alert(err.response.data))
     
   }
   return (

@@ -15,7 +15,6 @@ export default function HomePage() {
   
   
   useEffect(() => {
-    console.log(user)
     if(!user) {
       return navigate("/")
     }
@@ -26,7 +25,6 @@ export default function HomePage() {
     })
     promise.then((res) => {
       const arr = res.data
-      console.log(arr)
       const sald = arr.pop()
       setList(arr.reverse())
       setBalance(sald.saldo)

@@ -14,6 +14,7 @@ export default function SignUpPage() {
   const navigate = useNavigate()
   async function handleSubmit(e) {
     e.preventDefault()
+    if(!password || !confirmP || !name || !email) return alert("Preencha todos os campos!")
     if(password !== confirmP) return alert("Senhas diferentes")
     const body = {name, email, password}
     try {
